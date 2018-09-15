@@ -1,0 +1,316 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>VCG Team</title>
+	<link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/bootstrap.min.css') }}">
+	<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.4.2.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+            // Use a "/test" namespace.
+            // An application can open a connection on multiple namespaces, and
+            // Socket.IO will multiplex all those connections on a single
+            // physical channel. If you don't care about multiple channels, you
+            // can set the namespace to an empty string.
+            
+			
+					
+			
+
+			
+			
+			$('#clear').click(function() {
+				location.reload();
+				
+				
+			});
+
+			namespace = '/test';
+
+            // Connect to the Socket.IO server.
+            // The connection URL has the following format:
+            //     http[s]://<domain>:<port>[/<namespace>]
+            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+
+            
+            //socket.on('my_response_dass', function(msg) {
+            //    $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+            //});
+
+			socket.on('my_bo', function(msg) {
+                $('#backofficedata').append('<option>' + $('<div/>').text('Account/CIN : ' + msg.CIN).html());
+				$('#backofficedata').append('<option>' + $('<div/>').text('SortCode : ' + $('#SortCode').val()).html());
+				$('#backofficedata').append('<option>' + $('<div/>').text('Name : ' + msg.Name).html());
+				$('#backofficedata').append('<option>' + $('<div/>').text('Account/CIN : ' + msg.CIN).html());
+				$('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence1 : ' + msg.Tax_Residence1).html());
+				$('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence2 : ' + msg.Tax_Residence2).html());
+				$('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence3 : ' + msg.Tax_Residence3).html());
+				$('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence4 : ' + msg.Tax_Residence4).html());
+				$('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence5 : ' + msg.Tax_Residence5).html());
+				$('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence6 : ' + msg.Tax_Residence6).html());
+				$('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence7 : ' + msg.Tax_Residence7).html());
+				$('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence8 : ' + msg.Tax_Residence8).html());
+				$('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence9 : ' + msg.Tax_Residence9).html());
+				
+            });
+            
+			socket.on('img_result', function(msg) {
+			var data = String(msg.img_resultss);
+			console.log('message form backend ' + data);
+			
+			var arr = data.split(',');
+				$.each(arr, function(i, field){
+					$("#resultselect").append('<option>' + $('<div/>').text(String(field)).html());
+					});
+		
+                console.log('message form backend ' + msg);
+            });
+			
+			
+			
+			//$('#resultselect').on('change', function() {
+			//	alert( this.value );
+			//});
+			
+            $('form#emit').submit(function(event) {
+                socket.emit('my_event', {data: $('#emit_data').val()});
+                return false;
+            });
+            
+			$('form#accform').submit(function(event) {
+                socket.emit('my_event', {data: $('#accountnumber').val() + ':' + $('#SortCode').val() + ':' + $('#cinnumber').val()});
+                return false;
+            });
+			
+
+			
+        });
+    </script>
+	
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	
+</head>
+<body>
+
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <a class="navbar-brand" href="#">CTO</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarColor01">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Features</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Details</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">About</a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="text" placeholder="Search">
+      <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+
+
+
+
+	<form id="accform" method="POST" action='#'>
+	  <fieldset>
+	  
+	 
+   		<div class="container">
+	<div class="card mb-3">
+	<h3 class="card-header text-primary">Enter the Account details</h3>
+	
+
+  <div class="row justify-content-md-center">
+  
+	  <div class="col col-lg-3">
+		<div class="form-group">
+		  <label class="text-primary" for="exampleInputEmail1">Account Number</label>
+		  <input type="text" class="form-control" id="accountnumber" aria-describedby="accountnumber" placeholder="Enter Account Number">
+		  <!--small id="accountnumber" class="form-text text-muted">Enter the account number.</small-->
+		</div>
+		</div>
+		<div class="col col-lg-3">
+			<div class="form-group">
+			  <label class="text-primary" for="SortCode">SortCode</label>
+			  <input type="text" class="form-control" id="SortCode" placeholder="Enter SortCode">
+			</div>
+		</div>
+		
+		<div class="col col-lg-3">
+			<div class="form-group">
+			  <label class="text-primary" for="cinnumber">CIN</label>
+			  <input type="text" class="form-control" id="cinnumber" placeholder="Enter CIN Number">
+			</div>
+		</div>
+		
+		
+</div>
+
+<div class="card">
+  <div class="card-body">
+  
+     <div class="row justify-content-md-center">
+  
+<div class="col col-lg-2">
+ 
+        <label class="text-primary" class="form-check-label">
+          <input class="form-check-input" id="checkboxBO" type="checkbox" value="false" checked="false">
+          BackOffice
+        </label>
+      </div>
+      
+	  <div  class="col col-lg-2"> 
+        <label class="text-primary" class="form-check-label">
+          <input class="form-check-input" id="checkboxnanpa" type="checkbox" value="true" checked="true">
+          Nanpa
+        </label>
+      </div>
+	  
+	  	  <div class="col col-lg-2"> 
+        <label class="text-primary" class="form-check-label">
+          <input class="form-check-input" id="checkboxtin" type="checkbox" value="true" checked="true">
+          TIN
+        </label>
+      </div>
+	  
+	  	  <div class="col col-lg-2"> 
+        <label class="text-primary" class="form-check-label">
+          <input class="form-check-input" id="checkboximage" type="checkbox" value="true" checked="true">
+          Image and Workflow
+        </label>
+      </div>
+	  
+	  </div>
+</div>
+</div>
+	  <div class="card">
+  <div class="card-body">
+  <div class="row justify-content-md-center">
+	  <div class="col col-lg-2">
+		<button type="submit" class="btn btn-primary">Submit</button>
+		</div>
+		
+		<div class="col col-lg-2">
+		<button type="button" id="clear" class="btn btn-primary">Clear</button>
+		</div>
+		
+</div>
+</div>		
+</div>
+</div>
+	
+
+ 
+
+
+	  </fieldset>
+	</form>
+
+	<div class="container">
+	  <div class="row justify-content-md-center">
+	  <div class="col col-lg-6">
+		<div class="form-group">
+		  <label for="exampleSelect2">BackOffice Data</label>
+		  <select style="height: 300px" multiple="" class="form-control" id="backofficedata">
+			
+		  </select>
+		</div>
+		</div>
+		  <div class="col col-lg-6">
+		<div class="form-group">
+		  <label for="exampleSelect2">Nanpa</label>
+		  <select style="height: 300px" multiple="" class="form-control" id="nanpa">
+			<!--option>1</option-->
+			
+		  </select>
+		</div>
+		</div>
+		
+		</div>
+	</div>
+
+	<div class="container">
+	  <div class="row justify-content-md-center">
+	  <div class="col col-lg-6">
+		<div class="form-group">
+		  <label for="exampleSelect2">BackOffice Complete Data</label>
+		  <select multiple="" class="form-control" id="exampleSelect2">
+			
+		  </select>
+		</div>
+		</div>
+		  <div class="col col-lg-6">
+		<div class="form-group">
+		  <label for="exampleSelect2">TIN</label>
+		  <select multiple="" class="form-control" id="exampleSelect2">
+			
+		  </select>
+		</div>
+		</div>
+		
+		</div>
+	</div>
+	
+		<div class="container">
+	<div class="card mb-3">
+	<h3 class="card-header">Image and Workflow PDF</h3>
+	<div class="col col-lg-6">
+	<div class="form-group">
+      <label for="exampleSelect1">Select Field</label>
+      <select class="form-control" id="resultselect" onchange="getval(this);">
+       <option>Select</option>
+	   
+      </select>
+	  
+	  <script type="text/javascript">
+        function getval(sel)
+			
+			{
+			 var sp = String(sel.value).split(":");
+			 //console.log("sss" + sp[0] + "/static/" + $.trim(sp[0]) + "_" + $.trim(sp[1]) + "_result_" + $.trim(sp[0]) + "DInputPage" + $.trim(sp[2]) + ".png");
+			 //console.log("sss" + sp[1] + "/static/" + $.trim(sp[0]) + "Input.pdf#page=" + $.trim(sp[2]));
+			 //console.log("sss" + sp[2]);
+			 
+			 
+			$('#imgobj').attr('src', "/static/" + $.trim(sp[0]) + "_" + $.trim(sp[1]) + "_result_" + $.trim(sp[0]) + "_" + $.trim(sp[3]) + "_DInputPage" + $.trim(sp[2]) + ".png");
+			$('#pdfobj').attr('data', "/static/" + $.trim(sp[0]) + "_" + $.trim(sp[3]) + "_Input.pdf#page=" + $.trim(sp[2]));
+			//document.getElementById("imgobj").scr = "/static/TaxResidency.gif";
+			//alert(document.getElementById("imgobj").scr);
+			
+			}
+    </script>
+	
+    </div>
+	 </div>
+	
+	<img id="imgobj" style="height: 200px; width: 100%; display: block;" src="" alt="">
+	<!--img id="imgobj" style="height: 200px; width: 100%; display: block;" src="/static/TaxResidency.gif" alt="Card image"-->
+	<!--object id="pdfobj" style="height: 800px; width: 100%; display: block;" data={{ url_for('static', filename='selvgnbInput.pdf') }}#page=3" type="application/pdf" --> 
+	<object id="pdfobj" data="" style="height: 800px; width: 100%; display: block;" data="" type="application/pdf" > 
+  <p>It appears you don't have a PDF plugin for this browser.
+   No biggie... you can <a href="resume.pdf">click here to
+  download the PDF file.</a></p>  
+ </object>
+ </div>
+  </div>
+ 
+    <!--div id="log"></div-->
+<!--img src="TaxResidency.gif" class="img-fluid" alt="Responsive image"-->	
+</body>
+</html>
