@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- <meta charset="utf-8"> -->
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VCG PPI NickName Search POC</title>
+
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/> -->
+
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+  <!-- <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script> -->
+  <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+  <!-- <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script> -->
+  <script type="text/javascript" language="javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.js"></script>
+  <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"></script>
+
+
+
+  <script type="text/javascript" charset="utf-8">
+  var tempsl = "";
+  var tempval = "";
+
+    $(document).ready(function () {
+      // Use a "/test" namespace.
+      // An application can open a connection on multiple namespaces, and
+      // Socket.IO will multiplex all those connections on a single
+      // physical channel. If you don't care about multiple channels, you
+      // can set the namespace to an empty string.
+      namespace = '/test';
+      // Connect to the Socket.IO server.
+      // The connection URL has the following format:
+      //     http[s]://<domain>:<port>[/<namespace>]
+      var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+
+
+
+      //$("#listadd ul").append('<li class="list-group-item">Select All</li>');
+
+
+      //socket.on('my_response_dass', function(msg) {
+      //    $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+      //});
+      // socket.on('my_bo', function(msg) {
+      //           $('#backofficedata').append('<option>' + $('<div/>').text('Account/CIN : ' + msg.CIN).html());
+      //   $('#backofficedata').append('<option>' + $('<div/>').text('SortCode : ' + $('#SortCode').val()).html());
+      //   $('#backofficedata').append('<option>' + $('<div/>').text('Name : ' + msg.Name).html());
+      //   $('#backofficedata').append('<option>' + $('<div/>').text('Account/CIN : ' + msg.CIN).html());
+      //   $('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence1 : ' + msg.Tax_Residence1).html());
+      //   $('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence2 : ' + msg.Tax_Residence2).html());
+      //   $('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence3 : ' + msg.Tax_Residence3).html());
+      //   $('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence4 : ' + msg.Tax_Residence4).html());
+      //   $('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence5 : ' + msg.Tax_Residence5).html());
+      //   $('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence6 : ' + msg.Tax_Residence6).html());
+      //   $('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence7 : ' + msg.Tax_Residence7).html());
+      //   $('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence8 : ' + msg.Tax_Residence8).html());
+      //   $('#backofficedata').append('<option>' + $('<div/>').text('Tax_Residence9 : ' + msg.Tax_Residence9).html());
+      //
+      //       });
+
+      // socket.on('img_result', function(msg) {
+      // var data = String(msg.img_resultss);
+      // console.log('message form backend ' + data);
+      //
+      // var arr = data.split(',');
+      //   $.each(arr, function(i, field){
+      //     $("#resultselect").append('<option>' + $('<div/>').text(String(field)).html());
+      //     });
+      //
+      //           console.log('message form backend ' + msg);
+      //       });
+
+
+
+      //$('#resultselect').on('change', function() {
+      //	alert( this.value );
+      //});
+
+      // $('form#emit').submit(function(event) {
+      //     socket.emit('my_event', {data: $('#emit_data').val()});
+      //     return false;
+      // });
+
+
+
+      $('#btnReport').click(function(){
+        var selectedcell = "";
+          t.rows().eq(0).each( function ( index ) {
+            var row = t.row( index );
+            var data = row.data();
+                var rowNode = row.node();
+                $(rowNode).find("td:eq(0)").each(function (){
+                    //console.log($(this).context.innerHTML);
+                     var cellData = $(this).text();
+                     var dcel = document.getElementById(cellData);
+                     if(dcel.checked == true)
+                     {
+                       //alert(dcel.checked);
+                       selectedcell = selectedcell + cellData + "<,>";
+                     }
+                     });
+          });
+
+          if (selectedcell != "") {
+            socket.emit('GenerateReport', { ReportData: selectedcell});
+
+          alert(selectedcell);
+          }
+
+
+      });
+
+      $('form#accform').submit(function (event) {
+
+        var selectValues = "";
+        $("#addquery option").each(function () {
+          selectValues = selectValues + $(this).text() + "<,>";
+        });
+        //alert (selectValues);
+
+        socket.emit('click_submit', { companyname: selectValues, ProfileSearchCheckBox:$('#ProfileSearchCheckBox').is(':checked'), WorldCheckBox:$('#WorldCheckBox').is(':checked') });
+        //socket.emit('click_submit', {companyname: $('#companyname').val(), googlesearchpage:  $('#googlesearchpage').val()});
+        return false;
+      });
+
+
+
+
+      $("#profileAdd").click(function () {
+        //alert("The paragraph was clicked.");
+        socket.emit('extract_button', {nickname:$('#companyname').val(), PostalCode:$('#PostalCode').val()});
+        //alert("The paragraph was clicked.");
+      });
+
+      socket.on('NickName_responce', function (msg) {
+              //alert("Result has been updated");
+              $("ul").empty();
+              var data = msg.resultdata;
+              var arr = data.split("<!>");
+              $.each(arr, function (index, value) {
+
+                $("#listadd ul").append('<li class="list-group-item">' + value + '</li>');
+            });
+            listboxrefresh();
+            });
+
+
+
+//update slection
+
+
+    $('#clear').click(function () {
+      location.reload();
+    });
+
+listboxrefresh();
+      //myFunctiontest();
+    });
+  </script>
+  <script>
+    function myFunctiontest() {
+      setInterval(function () {
+        //code goes here that will be run every 5 seconds.
+        //alert("Hello");
+        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+        socket.emit('testmy_event', "Timmer Testing");
+        console.log("Timer");
+      }, 2000);
+
+    }
+
+    function listboxrefresh()
+{
+  $(function () {
+      $('.list-group.checked-list-box .list-group-item').each(function () {
+
+          // Settings
+          var $widget = $(this),
+              $checkbox = $('<input type="checkbox" class="hidden" />'),
+              color = ($widget.data('color') ? $widget.data('color') : "primary"),
+              style = ($widget.data('style') == "button" ? "btn-" : "list-group-item-"),
+              settings = {
+                  on: {
+                      icon: 'glyphicon glyphicon-check'
+                  },
+                  off: {
+                      icon: 'glyphicon glyphicon-unchecked'
+                  }
+              };
+
+          $widget.css('cursor', 'pointer')
+          $widget.append($checkbox);
+
+          // Event Handlers
+          $widget.on('click', function () {
+              $checkbox.prop('checked', !$checkbox.is(':checked'));
+              $checkbox.triggerHandler('change');
+              updateDisplay();
+          });
+          $checkbox.on('change', function () {
+              updateDisplay();
+          });
+
+
+          // Actions
+          function updateDisplay() {
+              var isChecked = $checkbox.is(':checked');
+
+              // Set the button's state
+              $widget.data('state', (isChecked) ? "on" : "off");
+
+              // Set the button's icon
+              $widget.find('.state-icon')
+                  .removeClass()
+                  .addClass('state-icon ' + settings[$widget.data('state')].icon);
+
+              // Update the button's color
+              if (isChecked) {
+                  $widget.addClass(style + color + ' active');
+              } else {
+                  $widget.removeClass(style + color + ' active');
+              }
+          }
+
+          // Initialization
+          function init() {
+
+              if ($widget.data('checked') == true) {
+                  $checkbox.prop('checked', !$checkbox.is(':checked'));
+              }
+
+              updateDisplay();
+
+              // Inject the icon if applicable
+              if ($widget.find('.state-icon').length == 0) {
+                  $widget.prepend('<span class="state-icon ' + settings[$widget.data('state')].icon + '"></span>');
+              }
+          }
+          init();
+      });
+
+      $('#get-checked-data').on('click', function(event) {
+          event.preventDefault();
+          var checkedItems = {}, counter = 0;
+          $("#check-list-box li.active").each(function(idx, li) {
+              checkedItems[counter] = $(li).text();
+              counter++;
+          });
+          $('#display-json').html(JSON.stringify(checkedItems, null, '\t'));
+      });
+  });
+
+
+
+}  </script>
+
+  <style>
+    a:link {color: red;}
+    a:visited {color: green;}
+    a:hover {color: hotpink;}
+    a:active {color: blue;}
+  </style>
+
+</head>
+
+
+
+<body style="Background:#d8f4ff">
+
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+
+        <a class=" justify-content-md-center navbar-brand" href="#">VCG PPI NickName Search POC</a>
+      </div>
+
+
+    </div>
+  </nav>
+
+
+
+
+  <form id="accform" method="POST" action='#'>
+    <fieldset>
+
+
+      <div class="container">
+        <div class="card mb-3">
+          <!-- <div style="border-style: outset;" class="card mb-3"> -->
+          <h3 class="card-header text-primary">Please enter the Nick Name</h3>
+
+<!--start of first row-->
+          <div class="row justify-content-md-center">
+
+            <div class="col col-lg-3">
+              <div class="form-group">
+                <label class="text-primary" for="exampleInputEmail1">Company Name</label>
+                <input type="text" class="form-control" style="height:auto;" id="companyname" aria-describedby="accountnumber" placeholder="Enter Nick Name">
+                <!--small id="accountnumber" class="form-text text-muted">Enter the account number.</small-->
+              </div>
+            </div>
+
+            <div class="col col-lg-3">
+              <div class="form-group">
+                <label class="text-primary" for="exampleInputEmail1">Postal Code</label>
+                <input type="text" class="form-control" style="height:auto;" id="PostalCode" aria-describedby="accountnumber" placeholder="Enter PostalCode Name">
+                <!--small id="accountnumber" class="form-text text-muted">Enter the account number.</small-->
+              </div>
+            </div>
+            <div class="col col-lg-3">
+              <div class="pt-5 form-group">
+                <button type="button" id="profileAdd" style="width:auto;margin-top:25px;" class="form-control btn btn-success">Get Full Name</button>
+                <!--small id="accountnumber" class="form-text text-muted">Enter the account number.</small-->
+              </div>
+            </div>
+          </div>
+
+            </div>
+            <div class="row justify-content-md-center">
+            <div class="col-xs-6">
+                        <h3 class="text-primary">Match Result</h3>
+                        <div id="listadd" class="well" style="max-height: 300px;overflow: auto;">
+                    		<ul class="list-group checked-list-box">
+                              <!--<li class="list-group-item">Cras justo odio</li>
+                              <li class="list-group-item" data-checked="true">Dapibus ac facilisis in</li>-->
+
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col col-lg-3">
+                      <div class="pt-5 form-group">
+                        <button type="button" id="Addlist" style="width:auto;margin-top:25px;" class="form-control btn btn-success">BO Search</button>
+                        <!--small id="accountnumber" class="form-text text-muted">Enter the account number.</small-->
+                      </div>
+                    </div>
+
+  </div>
+
+
+
+
+
+
+
+        <div class="row justify-content-md-center">
+          <!--- staring tab start -->
+          <div class="container" >
+            <h2>Search Result</h2>
+
+            <div class="tab-content">
+              <div style="width:auto; border:1px solid green; padding:3px; padding: 5px;" id="home" class="tab-pane fade in active">
+                <!--h3>HOME</h3-->
+
+                <table id="outputtable" class="table table-hover table-striped table-bordered table-condensed">
+                  <thead>
+                    <tr>
+                      <th scope="col">Sl</th>
+                      <th scope="col">Name
+                        <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                      </th>
+                      <th scope="col">DOB</th>
+                      <th scope="col">Postal Code</th>
+                      <th scope="col">Address
+                        <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                      </th>
+                      <th scope="col">AI Score
+                        <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                      </th>
+                      <th scope="col">Match Score %</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!--tr class="table-active">
+      <th scope="row">Active</th>
+      <td>Column content</td>
+      <td>Column content</td>
+      <td>Column content</td>
+    </tr-->
+
+                  </tbody>
+                </table>
+
+              </div>
+              <div id="menu1" class="tab-pane fade">
+
+                <div class="card-body">
+                  <p id="output" class="card-text text-success" style="background:#fff; padding: 35px;" ></p>
+
+                </div>
+
+
+              </div>
+              <div id="menu2" class="tab-pane fade" style="background:#fff; padding: 35px;">
+
+                <div class="card-body">
+                  <p id="aicompletenews" class="card-text text-success"></p>
+
+                </div>
+
+              </div>
+              <div id="menu3" class="tab-pane fade" style="background:#fff; padding: 35px;">
+                <div class="card-body">
+                  <p id="aiotherwebsites" class="card-text text-success"></p>
+                </div>
+              </div>
+              <div id="menu4" class="tab-pane fade" style="background:#fff; padding: 35px;">
+                <div class="card-body">
+                  <p id="worldchecktab" class="card-text text-success"></p>
+                </div>
+              </div>
+
+
+
+            </div>
+
+            <script>
+              $(document).ready(function () {
+                $(".nav-tabs a").click(function () {
+                  $(this).tab('show');
+                });
+              });
+            </script>
+            <!--- staring tab end -->
+
+
+
+
+          </div>
+        </div>
+
+
+      </div>
+
+
+      <script type="text/javascript">
+        // set interval
+
+        function rowclick(x) {
+
+          namespace = '/test';
+          var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+          alert("hi");
+          alert("Row index is: " + x.columnIndex);
+          var num = x.rowIndex;
+          socket.emit('row_Index', num.toString());
+          console.log(x);
+
+        }
+      </script>
+
+
+
+    </fieldset>
+  </form>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <!-- <script src="{{ url_for('static', filename='jquery-3.3.1.js') }}"></script> -->
+  <!-- <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script> -->
+
+
+
+</body>
+
+</html>
